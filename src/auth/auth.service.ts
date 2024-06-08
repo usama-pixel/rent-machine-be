@@ -5,19 +5,8 @@ import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from '../typeorm/entities/User.entity';
 import { CreateUserDto } from './dto/create-user.dto';
+import * as bcrypt from 'bcrypt';
 
-const fakeUsers = [
-    {
-        id: 1,
-        username: 'LpPjv@example.com',
-        password: '12345'
-    },
-    {
-        id: 2,
-        username: 'abc@example.com',
-        password: '12345'
-    }
-]
 @Injectable()
 export class AuthService {
     private readonly logger = new Logger(AuthService.name);
@@ -26,19 +15,17 @@ export class AuthService {
         @InjectRepository(User) private readonly userRepo: Repository<User>
     ) {}
     async validateUser({username, password}: AuthPayloadDto) {
-        console.log('bro', username);
         const findUser = await this.userRepo.findOneBy({email: username});
-        this.logger.log({findUser})
-        // findUser.
-        // const findUser = fakeUsers.find(user => user.username === username);
+        // this.logger.log({findUser})
         if(!findUser) return null;
-        if(password === findUser.password) {
+        const isSame = await bcrypt.compare(password, findUser.password);
+        console.log({isSame})
+        if(isSame) {
             const {password, ...user} = findUser;
             return this.generateToken(user);
         }
     }
     async generateToken(data: any) {
-        console.log({data});
         return this.jwtService.sign(data);
     }
     async findUserByEmail(email: string) {
@@ -46,7 +33,10 @@ export class AuthService {
         return user
     }
     async createUser(userDto: CreateUserDto) {
-        console.log({userDto})
+        if(userDto.password) {
+            const salt = +(process.env.SALT || 10);
+            userDto.password = await bcrypt.hash(userDto.password, salt);
+        }
         const newUser = this.userRepo.create(userDto)
         return this.userRepo.save(newUser)
     }

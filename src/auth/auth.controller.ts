@@ -1,4 +1,4 @@
-import { Body, Controller, Get, HttpException, Post, Req, Res, UseGuards } from '@nestjs/common';
+import { Body, ConflictException, Controller, Get, HttpException, Post, Req, Res, UseGuards } from '@nestjs/common';
 import { AuthPayloadDto } from './dto/auth.dto';
 import { AuthService } from './auth.service';
 import { AuthGuard } from '@nestjs/passport';
@@ -15,6 +15,15 @@ export class AuthController {
     login(@Req() req: Request) {
         return req.user; // returning the jwt token
     }
+
+    @Post('signup')
+    async signup(@Body() body: AuthPayloadDto) {
+        const email = body.username
+        const user = await this.authService.findUserByEmail(email);
+        if(user) throw new ConflictException('User already exists');
+        return this.authService.createUser({...body, email: body.username});
+    }
+    
     @Get('status')
     @UseGuards(JwtAuthGuard)
     status(@Req() req: Request) {
