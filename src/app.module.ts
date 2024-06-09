@@ -6,6 +6,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { PassportModule } from '@nestjs/passport';
 import { AuthModule } from './auth/auth.module';
 import { User } from './typeorm/entities/User.entity';
+import { PropertiesModule } from './properties/properties.module';
+import { Property } from './typeorm/entities/Property';
 
 @Global()
 @Module({
@@ -19,10 +21,11 @@ import { User } from './typeorm/entities/User.entity';
       password: process.env.DB_PASSWORD+'',
       database: 'rent',
       synchronize: true,
-      entities: [User],
+      entities: [User, Property],
     }),
     PassportModule,
     AuthModule,
+    PropertiesModule,
   ],
   controllers: [AppController],
   providers: [

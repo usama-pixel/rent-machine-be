@@ -1,4 +1,5 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Property } from "./Property";
 
 @Entity({name: 'users'})
 export class User {
@@ -19,4 +20,7 @@ export class User {
 
     @Column({default: false})
     verified: boolean
+
+    @OneToMany(type => Property, property => property.user)
+    properties: Property[]
 }
