@@ -19,6 +19,7 @@ import { GoogleStrategy } from './strategies/google.strategy';
     TypeOrmModule.forFeature([User]), // Register the User entity
   ],
   controllers: [AuthController],
-  providers: [AuthService, LocalStrategy, JwtStrategy, GoogleStrategy]
+  providers: [AuthService, LocalStrategy, JwtStrategy, GoogleStrategy],
+  exports: [AuthService]
 })
 export class AuthModule {}

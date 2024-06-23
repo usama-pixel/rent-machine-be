@@ -31,6 +31,10 @@ export class AuthService {
         const user = await this.userRepo.findOneBy({email})
         return user
     }
+    async findUserById(id: number) {
+        const user = await this.userRepo.findOne({where: {id}});
+        return user;
+    }
     async createUser(userDto: CreateUserDto) {
         if(userDto.password) {
             const salt = +(process.env.SALT || 10);

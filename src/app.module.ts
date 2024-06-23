@@ -8,6 +8,9 @@ import { AuthModule } from './auth/auth.module';
 import { User } from './typeorm/entities/User.entity';
 import { PropertiesModule } from './properties/properties.module';
 import { Property } from './typeorm/entities/Property';
+import { GatewayModule } from './gateway/gateway.module';
+import { Message } from './typeorm/entities/Message';
+import { MessageModule } from './message/message.module';
 
 @Global()
 @Module({
@@ -21,11 +24,13 @@ import { Property } from './typeorm/entities/Property';
       password: process.env.DB_PASSWORD+'',
       database: 'rent',
       synchronize: true,
-      entities: [User, Property],
+      entities: [User, Property, Message],
     }),
     PassportModule,
     AuthModule,
     PropertiesModule,
+    GatewayModule,
+    MessageModule
   ],
   controllers: [AppController],
   providers: [

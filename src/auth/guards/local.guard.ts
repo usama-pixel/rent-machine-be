@@ -5,6 +5,7 @@ import { Observable } from "rxjs";
 @Injectable()
 export class LocalGuard extends AuthGuard('local') {
     canActivate(context: ExecutionContext): boolean | Promise<boolean> | Observable<boolean> {
+        console.log('can activate')
         return super.canActivate(context);
     }
 }

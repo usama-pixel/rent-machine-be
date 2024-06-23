@@ -19,9 +19,17 @@ export class AuthController {
     @Post('signup')
     async signup(@Body() body: AuthPayloadDto) {
         const email = body.username
+        console.log({email, 'body.username': body.username})
         const user = await this.authService.findUserByEmail(email);
+        console.log({user, body})
         if(user) throw new ConflictException('User already exists');
         return this.authService.createUser({...body, email: body.username});
+    }
+
+    @Get('me')
+    @UseGuards(JwtAuthGuard)
+    me(@Req() req: Request) {
+        return req.user;
     }
     
     @Get('status')
@@ -40,8 +48,9 @@ export class AuthController {
 
     @Get('google/callback')
     @UseGuards(GoogleGuard)
-    async callback(@Req() req: Request) {
+    async callback(@Req() req: Request, @Res() res: Response) {
         const token = await this.authService.generateToken({...req.user});
-        return token;
+        res.redirect('http://localhost:3000/home/?token=' + token);
+        // return token;
     }
 }

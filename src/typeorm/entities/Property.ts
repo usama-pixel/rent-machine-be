@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 import { User } from "./User.entity";
 
 @Entity({name: 'properties'})
@@ -15,7 +15,7 @@ export class Property {
     @Column({default: 0, type: 'int'})
     rent: number
 
-    @Column()
+    @Column({nullable: true})
     property_type: string
 
     @Column({nullable: true, type: 'int'})
@@ -27,16 +27,19 @@ export class Property {
     @Column({type: 'int', default: 0})
     sqft: number
 
-    @Column()
+    @Column({nullable: true})
     description: string
     
-    @Column()
+    @Column({nullable: true})
     address: string
 
     @Column({nullable: true})
     image: string
 
+    @Column({default: false})
+    verified: boolean
+
     @ManyToOne(type => User, user => user.properties)
     user: User
-
+    
 }

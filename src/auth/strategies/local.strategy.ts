@@ -9,7 +9,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
         super();
     }
     validate(email: string, password: string) {
-        // console.log({email, password})
+        console.log('strategy');
         let username = email;
         const user = this.authService.validateUser({username, password});
         if(!user) throw new ConflictException();

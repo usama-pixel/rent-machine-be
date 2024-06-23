@@ -1,5 +1,6 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, JoinTable, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 import { Property } from "./Property";
+import { Message } from "./Message";
 
 @Entity({name: 'users'})
 export class User {
@@ -21,6 +22,12 @@ export class User {
     @Column({default: false})
     verified: boolean
 
-    @OneToMany(type => Property, property => property.user)
+    @OneToMany(() => Message, message => message.from)
+    sentMessages: Message[];
+
+    @OneToMany(() => Message, message => message.to)
+    receivedMessages: Message[];
+    
+    @OneToMany(() => Property, property => property.user)
     properties: Property[]
 }
