@@ -20,10 +20,9 @@ export class MessageService {
                 {to: user, from: contact},
                 {to: contact, from: user},
             ],
-            // where: [
-            //     {to: user, from: contact},
-            //     {to: contact, from: user},
-            // ],
+            order: {
+                createdAt: 'ASC'
+            },
             relations: ['to', 'from']
         })
     }

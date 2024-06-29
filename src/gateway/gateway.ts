@@ -21,38 +21,32 @@ export class MyGateway implements OnModuleInit {
     private socketIds: Map<string, Socket> = new Map();
     onModuleInit() {
         this.server.on('connection', socket => {
-            // console.log(socket.id)
-            this.socketIds.set(socket.id, socket);
-            // this.ids.push(socket.id);
-            // console.log('Connected');
+            // console.log({handshake: socket.handshake.query.userId})
+            const userId = socket.handshake.query.userId
+            if(!userId) return;
+            this.socketIds.set(userId as string, socket);
         });
     }
-
+    count = 0;
     @SubscribeMessage('newMessage')
     async onNewMessage(@MessageBody() body: any, @ConnectedSocket() socket) {
-        console.log({body})
-        console.log(socket.id)
-        const fromUser = await this.authService.findUserById(+body.from)
-        const toUser = await this.authService.findUserById(+body.to)
-        console.log({fromUser, toUser})
+        console.log("newMessagebro", this.count)
+        this.count++;
+        const {to, from} = body
+        const toSocket = this.socketIds.get(to+'')
+        const fromSocket = this.socketIds.get(from+'')
+        const fromUser = await this.authService.findUserById(+from)
+        const toUser = await this.authService.findUserById(+to)
         const msg = this.messageRepo.create({
             from: fromUser,
             text: body.msg,
             to: toUser
         })
-        // const content = {
-        //     msg: {
-        //         from: fromUser,
-        //         text: body.msg,
-        //         to: toUser
-        //     }
-        // }
+        // KiyLavk8o32c1QiyAAAH
         this.messageRepo.save(msg);
-        this.server.emit('onMessage', {
+        this.server.to(toSocket.id).emit('onMessage', {
             msg: 'New Message',
             content: msg
-            // content: body,
-            // from: socket.id
         })
     }
 }
